@@ -15,7 +15,7 @@ import kotlinx.serialization.json.Json
 data class Codes(val codesDatas: List<CodeData>)
 
 @Serializable
-data class CodeData(val imagePath: String)
+data class CodeData(val imagePath: String, val labelText: String)
 
 class AppWidgetProvider : HomeWidgetProvider() {
     override fun onUpdate(
