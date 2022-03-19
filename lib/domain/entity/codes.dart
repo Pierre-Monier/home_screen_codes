@@ -1,16 +1,48 @@
-import "package:home_screen_codes/domain/entity/code_data.dart";
-import "package:json_annotation/json_annotation.dart";
+import 'package:home_screen_codes/domain/entity/code_data.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-part "codes.g.dart";
+part 'codes.g.dart';
 
 @JsonSerializable()
 class Codes {
-  const Codes({required this.codesDatas});
+  Codes({required this.codesDatas, this.currentIndex = 0});
 
   factory Codes.fromJson(Map<String, dynamic> json) => _$CodesFromJson(json);
-  factory Codes.empty() => const Codes(codesDatas: []);
+  factory Codes.empty() => Codes(
+        codesDatas: List.empty(growable: true),
+      );
 
   final List<CodeData> codesDatas;
+  // this should only be set in backgroundCallback
+  int currentIndex;
+
+  void updateIndex(IntentType intentType) {
+    if (intentType == IntentType.next) {
+      _next();
+    } else if (intentType == IntentType.previous) {
+      _previous();
+    }
+  }
+
+  void _next() {
+    if (codesDatas.length <= 1) {
+      return;
+    } else if (currentIndex == codesDatas.length - 1) {
+      currentIndex = 0;
+    } else {
+      currentIndex++;
+    }
+  }
+
+  void _previous() {
+    if (codesDatas.length <= 1) {
+      return;
+    } else if (currentIndex == 0) {
+      currentIndex = codesDatas.length - 1;
+    } else {
+      currentIndex--;
+    }
+  }
 
   // for now we ignore the const keyword because we can't add data to codesDatas
   // with const constructor
@@ -18,3 +50,5 @@ class Codes {
 
   Map<String, dynamic> toJson() => _$CodesToJson(this);
 }
+
+enum IntentType { next, previous }

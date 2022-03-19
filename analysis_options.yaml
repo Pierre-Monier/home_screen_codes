@@ -26,7 +26,7 @@ linter:
     - use_named_constants
     - require_trailing_commas
     - avoid_escaping_inner_quotes
-    - prefer_double_quotes
+    - prefer_single_quotes
     - cancel_subscriptions
     - close_sinks
     - always_use_package_imports

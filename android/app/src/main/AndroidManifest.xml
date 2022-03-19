@@ -32,7 +32,7 @@
             android:value="2" />
 
         <!-- Your Background receiver and service goes here -->
-        <receiver android:name="AppWidgetProvider" >
+        <receiver android:name="AppWidgetProvider" android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -40,7 +40,7 @@
                android:resource="@xml/widget_info" />
         </receiver>
 
-        <receiver android:name="es.antonborri.home_widget.HomeWidgetBackgroundReceiver">
+        <receiver android:name="es.antonborri.home_widget.HomeWidgetBackgroundReceiver" android:exported="true">
             <intent-filter>
                 <action android:name="es.antonborri.home_widget.action.BACKGROUND" />
             </intent-filter>

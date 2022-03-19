@@ -1,18 +1,48 @@
 <FrameLayout
     android:id="@+id/widget_root"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="180dp"
+    android:layout_width="match_parent"
     android:layout_height="110dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#1f303d">
+        android:background="@android:color/black">
 
         <ImageView
-            android:id="@+id/image_toto"
-            android:layout_width="180dp"
-            android:layout_height="110dp"
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="90dp" />
+
+        <Button
+            android:id="@+id/previous_button"
+            android:background="@android:drawable/arrow_down_float"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            />
+
+        <TextView
+            android:id="@+id/label_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
+            android:singleLine="true"
+            android:layout_centerHorizontal="true"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/next_button"
+            android:background="@android:drawable/arrow_up_float"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
             />
 
     </RelativeLayout>

@@ -1,6 +1,6 @@
-import "package:json_annotation/json_annotation.dart";
+import 'package:json_annotation/json_annotation.dart';
 
-part "code_data.g.dart";
+part 'code_data.g.dart';
 
 @JsonSerializable()
 class CodeData {
@@ -9,7 +9,7 @@ class CodeData {
   factory CodeData.fromJson(Map<String, dynamic> json) =>
       _$CodeDataFromJson(json);
 
-  static const defaultLabelText = "Default text";
+  static const defaultLabelText = 'Default text';
 
   final String imagePath;
   final String labelText;
