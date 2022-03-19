@@ -19,10 +19,14 @@ class CodesBloc extends BlocBase {
   }
 
   @override
-  void initState() {
+  void initState() async {
     HomeWidget.registerBackgroundCallback(backgroundCallback);
     HomeWidget.widgetClicked.listen((_) => _loadData());
-    _loadData();
+    await _loadData();
+
+    _codesController.listen((newCodes) {
+      _updateAppWidget(newCodes);
+    });
   }
 
   // Called when Doing Background Work initiated from Widget
@@ -35,6 +39,7 @@ class CodesBloc extends BlocBase {
         _codes = Codes.fromJson(json.decode(value) as Map<String, dynamic>)
           ..updateIndex(IntentTypeX.fromString(uri.host));
 
+        // we can't use _updateWidget because it's static
         await HomeWidget.saveWidgetData<String>(
           '_codes',
           json.encode(_codes.toJson()),
@@ -55,6 +60,45 @@ class CodesBloc extends BlocBase {
 
     _codes.codesDatas.add(codeData);
     _codesController.add(_codes);
+  }
+
+  void onOrderChange(int oldIndex, int newIndex) {
+    final _codes = _codesController.valueOrNull;
+    if (_codes == null) {
+      throw Exception('Trying to order an empty codes');
+    }
+
+    final _codeData = _codes.codesDatas.removeAt(oldIndex);
+    _codes.codesDatas.insert(newIndex, _codeData);
+  }
+
+  void updateCodeData({
+    required CodeData oldCodeData,
+    required CodeData newCodeData,
+  }) {
+    final _codes = _codesController.valueOrNull;
+    if (_codes == null) {
+      throw Exception('Trying to order an empty codes');
+    }
+
+    final _index = _codes.codesDatas.indexOf(oldCodeData);
+    final newCodesData = [..._codes.codesDatas];
+    newCodesData[_index] = newCodeData;
+
+    final newCodes = _codes.copyWith(codesDatas: newCodesData);
+
+    _codesController.add(newCodes);
+  }
+
+  Future<void> _updateAppWidget(Codes codes) async {
+    await HomeWidget.saveWidgetData<String>(
+      '_codes',
+      json.encode(codes.toJson()),
+    );
+    await HomeWidget.updateWidget(
+      name: 'AppWidgetProvider',
+      iOSName: 'AppWidgetProvider',
+    );
   }
 
   Future<void> _loadData() async {

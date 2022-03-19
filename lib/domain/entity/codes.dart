@@ -49,6 +49,11 @@ class Codes {
   // ignore: prefer_const_constructors
 
   Map<String, dynamic> toJson() => _$CodesToJson(this);
+
+  Codes copyWith({List<CodeData>? codesDatas, int? currentIndex}) => Codes(
+        codesDatas: codesDatas ?? this.codesDatas,
+        currentIndex: currentIndex ?? this.currentIndex,
+      );
 }
 
 enum IntentType { next, previous }

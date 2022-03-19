@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:home_screen_codes/bloc/bloc_provider.dart';
 import 'package:home_screen_codes/bloc/codes_bloc.dart';
 import 'package:home_screen_codes/core/color/app_color.dart';
 import 'package:home_screen_codes/page/home/home_view.dart';
 import 'package:home_screen_codes/service_locator.dart';
-import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   setupLocator();
   runApp(
-    MultiProvider(
-      providers: [
-        Provider<CodesBloc>(create: (_) => CodesBloc()),
+    BlocProvider(
+      key: GlobalKey(),
+      blocs: [
+        CodesBloc(),
       ],
       child: const MyApp(),
     ),

@@ -6,6 +6,10 @@ import android.graphics.BitmapFactory
 import android.widget.RemoteViews
 import es.antonborri.home_widget.HomeWidgetLaunchIntent
 
+import android.graphics.Bitmap
+import com.bumptech.glide.Glide
+
+
 class AppRemoteViews( packageName: String, id: Int): RemoteViews(packageName, id) {
 
     fun getLaunchIntent(context: Context): PendingIntent {
@@ -15,10 +19,18 @@ class AppRemoteViews( packageName: String, id: Int): RemoteViews(packageName, id
         )
     }
 
-    fun updateWidgetUI(codes: Codes, index: Int) {
+    fun updateWidgetUI(codes: Codes, index: Int, context: Context) {
         val codeData = codes.codesDatas[index]
-        val myBitmap = BitmapFactory.decodeFile(codeData.imagePath)
-        setImageViewBitmap(R.id.image, myBitmap)
+        val bitmapOptions = BitmapFactory.Options()
+        bitmapOptions.inSampleSize = 4
+        val bitmap = BitmapFactory.decodeFile(codeData.imagePath, bitmapOptions)
+
+//        val bitmap: Bitmap = Glide.with(context)
+//            .asBitmap()
+//            .load(codeData.imagePath)
+//            .override(480, 342).submit().get()
+
+        setImageViewBitmap(R.id.image, bitmap)
 
         setTextViewText(
             R.id.label_text,

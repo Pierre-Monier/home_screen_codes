@@ -1,29 +1,17 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:home_screen_codes/bloc/bloc_provider.dart';
 import 'package:home_screen_codes/bloc/codes_bloc.dart';
 import 'package:home_screen_codes/domain/entity/code_data.dart';
 import 'package:home_screen_codes/domain/entity/codes.dart';
+import 'package:home_screen_codes/page/widget/code_card.dart';
 import 'package:home_screen_codes/service/file_writter_service.dart';
 import 'package:home_screen_codes/service/image_picker_service.dart';
 import 'package:home_screen_codes/service_locator.dart';
-import 'package:home_widget/home_widget.dart';
-import 'package:provider/provider.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
-
-  Future<void> updateAppWidget(Codes codes) async {
-    await HomeWidget.saveWidgetData<String>(
-      '_codes',
-      json.encode(codes.toJson()),
-    );
-    await HomeWidget.updateWidget(
-      name: 'AppWidgetProvider',
-      iOSName: 'AppWidgetProvider',
-    );
-  }
 
   Future<void> _pickImageUri(BuildContext context, Codes codes) async {
     final imagePath =
@@ -32,9 +20,8 @@ class HomeView extends StatelessWidget {
     if (imagePath != null) {
       final imageFile =
           await sl.get<FileWritterService>().copyFile(File(imagePath));
-      Provider.of<CodesBloc>(context, listen: false)
+      BlocProvider.of<CodesBloc>(context)
           .addCodeData(CodeData(imagePath: imageFile.path));
-      updateAppWidget(codes);
     }
   }
 
@@ -44,11 +31,7 @@ class HomeView extends StatelessWidget {
 
     for (final codeData in codesData) {
       widgets.add(
-        ListTile(
-          key: Key('$i'),
-          tileColor: Colors.amber,
-          title: Text(codeData.labelText, key: Key('$i')),
-        ),
+        CodeCard(codeData: codeData, key: Key('$i')),
       );
       i++;
     }
@@ -63,7 +46,7 @@ class HomeView extends StatelessWidget {
         title: const Text('Title?'),
       ),
       body: StreamBuilder<Codes>(
-        stream: Provider.of<CodesBloc>(context).codes,
+        stream: BlocProvider.of<CodesBloc>(context).codes,
         builder: (context, snapshot) {
           final _data = snapshot.data;
 
@@ -87,7 +70,7 @@ class HomeView extends StatelessWidget {
         },
       ),
       floatingActionButton: StreamBuilder<Codes>(
-        stream: Provider.of<CodesBloc>(context).codes,
+        stream: BlocProvider.of<CodesBloc>(context).codes,
         builder: (context, snapshot) {
           final _data = snapshot.data;
 

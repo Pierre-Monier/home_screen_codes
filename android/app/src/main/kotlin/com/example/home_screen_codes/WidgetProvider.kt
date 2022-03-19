@@ -40,7 +40,7 @@ class AppWidgetProvider : HomeWidgetProvider() {
                     val parsedCodes = Json.decodeFromString<Codes>(jsonCodes)
                     if (parsedCodes.codesDatas.isNotEmpty()) {
                         codes = parsedCodes
-                        updateWidgetUI(codes!!, codes!!.currentIndex)
+                        updateWidgetUI(codes!!, codes!!.currentIndex, context)
                     }
                 }
 
