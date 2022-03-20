@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:home_screen_codes/domain/entity/code_data.dart';
-import 'package:home_screen_codes/page/widget/code_label_text_editor.dart';
+import 'package:home_screen_codes/page/home/widget/code_label_text_editor.dart';
 
 class CodeCard extends StatelessWidget {
   const CodeCard({required this.codeData, required Key key}) : super(key: key);

@@ -21,6 +21,7 @@ class _CodeLabelTextEditorState extends State<CodeLabelTextEditor> {
       return TextField(
         controller: TextEditingController(text: widget.codeData.labelText),
         autofocus: true,
+        textAlign: TextAlign.center,
         onSubmitted: (value) {
           setState(() {
             _isEditing = false;

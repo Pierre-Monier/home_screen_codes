@@ -5,7 +5,7 @@ import 'package:home_screen_codes/bloc/bloc_provider.dart';
 import 'package:home_screen_codes/bloc/codes_bloc.dart';
 import 'package:home_screen_codes/domain/entity/code_data.dart';
 import 'package:home_screen_codes/domain/entity/codes.dart';
-import 'package:home_screen_codes/page/widget/code_card.dart';
+import 'package:home_screen_codes/page/home/widget/code_card.dart';
 import 'package:home_screen_codes/service/file_writter_service.dart';
 import 'package:home_screen_codes/service/image_picker_service.dart';
 import 'package:home_screen_codes/service_locator.dart';
@@ -41,6 +41,7 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool _showFab = MediaQuery.of(context).viewInsets.bottom == 0.0;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Title?'),
@@ -64,27 +65,32 @@ class HomeView extends StatelessWidget {
 
           return ReorderableListView(
             padding: const EdgeInsets.symmetric(horizontal: 40),
-            onReorder: ((oldIndex, newIndex) {}),
+            onReorder: ((oldIndex, newIndex) {
+              BlocProvider.of<CodesBloc>(context)
+                  .onOrderChange(oldIndex, newIndex);
+            }),
             children: _getItems(_data.codesDatas),
           );
         },
       ),
-      floatingActionButton: StreamBuilder<Codes>(
-        stream: BlocProvider.of<CodesBloc>(context).codes,
-        builder: (context, snapshot) {
-          final _data = snapshot.data;
+      floatingActionButton: _showFab
+          ? StreamBuilder<Codes>(
+              stream: BlocProvider.of<CodesBloc>(context).codes,
+              builder: (context, snapshot) {
+                final _data = snapshot.data;
 
-          if (_data != null) {
-            return FloatingActionButton(
-              onPressed: () => _pickImageUri(context, snapshot.data!),
-              tooltip: 'Pick image',
-              child: const Icon(Icons.image),
-            );
-          }
+                if (_data != null) {
+                  return FloatingActionButton(
+                    onPressed: () => _pickImageUri(context, snapshot.data!),
+                    tooltip: 'Pick image',
+                    child: const Icon(Icons.image),
+                  );
+                }
 
-          return const SizedBox();
-        },
-      ),
+                return const SizedBox();
+              },
+            )
+          : null,
     );
   }
 }

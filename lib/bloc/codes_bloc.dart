@@ -39,58 +39,48 @@ class CodesBloc extends BlocBase {
         _codes = Codes.fromJson(json.decode(value) as Map<String, dynamic>)
           ..updateIndex(IntentTypeX.fromString(uri.host));
 
-        // we can't use _updateWidget because it's static
-        await HomeWidget.saveWidgetData<String>(
-          '_codes',
-          json.encode(_codes.toJson()),
-        );
-        await HomeWidget.updateWidget(
-          name: 'AppWidgetProvider',
-          iOSName: 'AppWidgetProvider',
-        );
+        _updateAppWidget(_codes);
       }
     }
   }
 
   void addCodeData(CodeData codeData) {
-    final _codes = _codesController.valueOrNull;
-    if (_codes == null) {
-      throw Exception('Trying to add data to an empty codes');
-    }
+    final _codes = _getCurrentCodes('Trying to add data to an empty codes');
 
     _codes.codesDatas.add(codeData);
     _codesController.add(_codes);
   }
 
   void onOrderChange(int oldIndex, int newIndex) {
-    final _codes = _codesController.valueOrNull;
-    if (_codes == null) {
-      throw Exception('Trying to order an empty codes');
-    }
+    final _codes = _getCurrentCodes('Trying to order an empty codes');
 
-    final _codeData = _codes.codesDatas.removeAt(oldIndex);
-    _codes.codesDatas.insert(newIndex, _codeData);
+    // we copy current codesDatas
+    final _newCodesDatas = [..._codes.codesDatas];
+    // then we update the order
+    final _codeData = _newCodesDatas.removeAt(oldIndex);
+    final finalNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
+    _newCodesDatas.insert(finalNewIndex, _codeData);
+
+    final _newCodes = _codes.copyWith(codesDatas: _newCodesDatas);
+    _codesController.add(_newCodes);
   }
 
   void updateCodeData({
     required CodeData oldCodeData,
     required CodeData newCodeData,
   }) {
-    final _codes = _codesController.valueOrNull;
-    if (_codes == null) {
-      throw Exception('Trying to order an empty codes');
-    }
+    final _codes = _getCurrentCodes('Trying to update an empty codes');
 
+    final _newCodesData = [..._codes.codesDatas];
     final _index = _codes.codesDatas.indexOf(oldCodeData);
-    final newCodesData = [..._codes.codesDatas];
-    newCodesData[_index] = newCodeData;
+    _newCodesData[_index] = newCodeData;
 
-    final newCodes = _codes.copyWith(codesDatas: newCodesData);
+    final newCodes = _codes.copyWith(codesDatas: _newCodesData);
 
     _codesController.add(newCodes);
   }
 
-  Future<void> _updateAppWidget(Codes codes) async {
+  static Future<void> _updateAppWidget(Codes codes) async {
     await HomeWidget.saveWidgetData<String>(
       '_codes',
       json.encode(codes.toJson()),
@@ -114,5 +104,14 @@ class CodesBloc extends BlocBase {
 
       _codesController.add(_codes);
     });
+  }
+
+  Codes _getCurrentCodes(String exceptionMessage) {
+    final _codes = _codesController.valueOrNull;
+    if (_codes == null) {
+      throw Exception(exceptionMessage);
+    }
+
+    return _codes;
   }
 }
