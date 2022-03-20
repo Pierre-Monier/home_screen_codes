@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:home_screen_codes/bloc/bloc_provider.dart';
 import 'package:home_screen_codes/bloc/codes_bloc.dart';
 import 'package:home_screen_codes/domain/entity/code_data.dart';
@@ -10,9 +11,41 @@ import 'package:home_screen_codes/service/file_writter_service.dart';
 import 'package:home_screen_codes/service/image_picker_service.dart';
 import 'package:home_screen_codes/service_locator.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
 
+  @override
+  State<StatefulWidget> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  bool _isFabExtended = true;
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(() {
+      if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (!_isFabExtended) {
+          setState(() {
+            _isFabExtended = true;
+          });
+        }
+      } else if (_scrollController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (_isFabExtended) {
+          setState(() {
+            _isFabExtended = false;
+          });
+        }
+      }
+    });
+  }
+
+  // TODO(pierre/high): this shoudl'nt be in widget code
   Future<void> _pickImageUri(BuildContext context, Codes codes) async {
     final imagePath =
         await sl.get<ImagePickerSerivce>().getImagePathFromGallery();
@@ -64,6 +97,7 @@ class HomeView extends StatelessWidget {
           }
 
           return ReorderableListView(
+            scrollController: _scrollController,
             padding: const EdgeInsets.symmetric(horizontal: 40),
             onReorder: ((oldIndex, newIndex) {
               BlocProvider.of<CodesBloc>(context)
@@ -80,10 +114,34 @@ class HomeView extends StatelessWidget {
                 final _data = snapshot.data;
 
                 if (_data != null) {
-                  return FloatingActionButton(
+                  return FloatingActionButton.extended(
+                    label: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) =>
+                              FadeTransition(
+                        opacity: animation,
+                        child: SizeTransition(
+                          sizeFactor: animation,
+                          axis: Axis.horizontal,
+                          child: child,
+                        ),
+                      ),
+                      child: _isFabExtended
+                          ? Row(
+                              children: const [
+                                Padding(
+                                  padding: EdgeInsets.only(right: 4.0),
+                                  child: Icon(Icons.qr_code),
+                                ),
+                                Text('Import a code')
+                              ],
+                            )
+                          : const Icon(Icons.qr_code),
+                    ),
                     onPressed: () => _pickImageUri(context, snapshot.data!),
-                    tooltip: 'Pick image',
-                    child: const Icon(Icons.image),
+                    tooltip: 'Import a code',
+                    // icon: const Icon(Icons.qr_code_sharp),
                   );
                 }
 
