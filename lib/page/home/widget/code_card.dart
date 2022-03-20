@@ -1,8 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:home_screen_codes/domain/entity/code_data.dart';
+import 'package:home_screen_codes/page/home/notifier/is_deleting_notifier.dart';
+import 'package:home_screen_codes/page/home/widget/code_card_image.dart';
+import 'package:home_screen_codes/page/home/widget/code_card_image_deletable.dart';
 import 'package:home_screen_codes/page/home/widget/code_label_text_editor.dart';
+import 'package:provider/provider.dart';
 
 class CodeCard extends StatelessWidget {
   const CodeCard({required this.codeData, required Key key}) : super(key: key);
@@ -13,19 +15,22 @@ class CodeCard extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (context, constraints) => Card(
           key: key,
-          child: Column(
-            children: [
-              ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height / 3,
+          child: Consumer<IsDeletingNotifier>(
+            builder: (context, notifier, child) => Column(
+              children: [
+                if (notifier.value)
+                  CodeCardImageDeletable(codeData: codeData)
+                else
+                  CodeCardImage(codeData: codeData),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: CodeLabelTextEditor(
+                    codeData: codeData,
+                    canEdit: !notifier.value,
+                  ),
                 ),
-                child: Image.file(File(codeData.imagePath)),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: CodeLabelTextEditor(codeData: codeData),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );

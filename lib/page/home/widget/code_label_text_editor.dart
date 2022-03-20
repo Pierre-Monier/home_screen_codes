@@ -4,10 +4,14 @@ import 'package:home_screen_codes/bloc/codes_bloc.dart';
 import 'package:home_screen_codes/domain/entity/code_data.dart';
 
 class CodeLabelTextEditor extends StatefulWidget {
-  const CodeLabelTextEditor({required this.codeData, Key? key})
-      : super(key: key);
+  const CodeLabelTextEditor({
+    required this.codeData,
+    required this.canEdit,
+    Key? key,
+  }) : super(key: key);
 
   final CodeData codeData;
+  final bool canEdit;
 
   @override
   _CodeLabelTextEditorState createState() => _CodeLabelTextEditorState();
@@ -17,7 +21,7 @@ class _CodeLabelTextEditorState extends State<CodeLabelTextEditor> {
   bool _isEditing = false;
 
   Widget _getChild() {
-    if (_isEditing) {
+    if (_isEditing && widget.canEdit) {
       return TextField(
         controller: TextEditingController(text: widget.codeData.labelText),
         autofocus: true,

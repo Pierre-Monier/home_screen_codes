@@ -1,13 +1,19 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:home_screen_codes/bloc/bloc_base.dart';
 import 'package:home_screen_codes/domain/entity/code_data.dart';
 import 'package:home_screen_codes/domain/entity/codes.dart';
 import 'package:home_screen_codes/extension/intent_type.dart';
+import 'package:home_screen_codes/service/file_writter_service.dart';
+import 'package:home_screen_codes/service/image_picker_service.dart';
+import 'package:home_screen_codes/service_locator.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:home_screen_codes/extension/string.dart';
 
+// TODO delete feature, crop feature (image_picker, https://stackoverflow.com/questions/45631350/flutter-hiding-floatingactionbutton), photo_view feature
 class CodesBloc extends BlocBase {
   final _codesController = BehaviorSubject<Codes>.seeded(Codes.empty());
 
@@ -44,7 +50,17 @@ class CodesBloc extends BlocBase {
     }
   }
 
-  void addCodeData(CodeData codeData) {
+  Future<void> importCode(ImageSource source) async {
+    final imagePath = await sl.get<ImagePickerSerivce>().getImagePath(source);
+
+    if (imagePath != null) {
+      final imageFile =
+          await sl.get<FileWritterService>().copyFile(File(imagePath));
+      _addCodeData(CodeData(imagePath: imageFile.path));
+    }
+  }
+
+  void _addCodeData(CodeData codeData) {
     final _codes = _getCurrentCodes('Trying to add data to an empty codes');
 
     _codes.codesDatas.add(codeData);
