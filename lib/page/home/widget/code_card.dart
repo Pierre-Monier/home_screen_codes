@@ -7,19 +7,27 @@ import 'package:home_screen_codes/page/home/widget/code_label_text_editor.dart';
 import 'package:provider/provider.dart';
 
 class CodeCard extends StatelessWidget {
-  const CodeCard({required this.codeData, required Key key}) : super(key: key);
+  const CodeCard({
+    required this.codeData,
+    required this.isDeletable,
+    required Key key,
+  }) : super(key: key);
 
   final CodeData codeData;
+  final bool isDeletable;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
+        key: key,
         builder: (context, constraints) => Card(
-          key: key,
           child: Consumer<IsDeletingNotifier>(
             builder: (context, notifier, child) => Column(
               children: [
                 if (notifier.value)
-                  CodeCardImageDeletable(codeData: codeData)
+                  CodeCardImageDeletable(
+                    codeData: codeData,
+                    isDeletable: isDeletable,
+                  )
                 else
                   CodeCardImage(codeData: codeData),
                 Padding(

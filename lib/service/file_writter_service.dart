@@ -21,4 +21,8 @@ class FileWritterService {
       return sourceFile.copy(destFilePath);
     }
   }
+
+  Future<void> deleteFileOnDisk(File file) {
+    return file.delete();
+  }
 }

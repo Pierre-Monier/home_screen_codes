@@ -13,15 +13,23 @@ import 'package:image_picker/image_picker.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:home_screen_codes/extension/string.dart';
 
-// TODO delete feature, crop feature (image_picker, https://stackoverflow.com/questions/45631350/flutter-hiding-floatingactionbutton), photo_view feature
+typedef UICodes = Map<CodeData, bool>;
+
+// TODO crop feature (image_picker, https://stackoverflow.com/questions/45631350/flutter-hiding-floatingactionbutton), photo_view feature
 class CodesBloc extends BlocBase {
   final _codesController = BehaviorSubject<Codes>.seeded(Codes.empty());
 
   Stream<Codes> get codes => _codesController.stream;
 
+  /// a wrapper on codes, use to set the deletable value
+  final _uiCodesController = BehaviorSubject<UICodes>.seeded({});
+
+  Stream<UICodes> get uiCodes => _uiCodesController.stream;
+
   @override
   void dispose() {
     _codesController.close();
+    _uiCodesController.close();
   }
 
   @override
@@ -32,6 +40,7 @@ class CodesBloc extends BlocBase {
 
     _codesController.listen((newCodes) {
       _updateAppWidget(newCodes);
+      _fillShouldDeleteCodeData(newCodes);
     });
   }
 
@@ -71,14 +80,14 @@ class CodesBloc extends BlocBase {
     final _codes = _getCurrentCodes('Trying to order an empty codes');
 
     // we copy current codesDatas
-    final _newCodesDatas = [..._codes.codesDatas];
+    // final _newCodesDatas = [..._codes.codesDatas];
     // then we update the order
-    final _codeData = _newCodesDatas.removeAt(oldIndex);
+    final _codeData = _codes.codesDatas.removeAt(oldIndex);
     final finalNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
-    _newCodesDatas.insert(finalNewIndex, _codeData);
+    _codes.codesDatas.insert(finalNewIndex, _codeData);
 
-    final _newCodes = _codes.copyWith(codesDatas: _newCodesDatas);
-    _codesController.add(_newCodes);
+    // final _newCodes = _codes.copyWith(codesDatas: _newCodesDatas);
+    _codesController.add(_codes);
   }
 
   void updateCodeData({
@@ -94,6 +103,55 @@ class CodesBloc extends BlocBase {
     final newCodes = _codes.copyWith(codesDatas: _newCodesData);
 
     _codesController.add(newCodes);
+  }
+
+  void updateUICodes({required CodeData codeData, required bool isDeletable}) {
+    final _uiCodes = _getCurrentUICodes(
+      'trying to update an empty deletable codes',
+    );
+
+    _uiCodes[codeData] = isDeletable;
+    _uiCodesController.add(_uiCodes);
+  }
+
+  void cleanUICodes() {
+    final _currentUICodes = _getCurrentUICodes(
+      'trying to clean an empty deletable codes data',
+    );
+
+    final _newUICodes =
+        _currentUICodes.map((key, value) => MapEntry(key, false));
+
+    _uiCodesController.add(_newUICodes);
+  }
+
+  void deleteCodesDatas() {
+    final _codes = _getCurrentCodes('Trying to delete an empty codes');
+    final _uiCodes = _getCurrentUICodes(
+      'Trying to delete an empty uiCodes',
+    );
+
+    final _shouldBeDeletedCodes = _uiCodes.entries
+        .where((uiCode) => uiCode.value)
+        .map((deletableCode) => deletableCode.key)
+        .toList();
+
+    for (final code in _shouldBeDeletedCodes) {
+      sl.get<FileWritterService>().deleteFileOnDisk(File(code.imagePath));
+      _codes.codesDatas.remove(code);
+    }
+
+    _codesController.add(_codes);
+    // // delete codesData on disk
+    // // uiCodes.map((key, value) => value);
+    // // remove from data structure
+    // // update data structure
+    // final _newCodesData = [..._codes.codesDatas];
+    // // _newCodesData.removeWhere((codeData) => shouldDeleteCodeData[codeData]);
+
+    // final newCodes = _codes.copyWith(codesDatas: _newCodesData);
+
+    // _codesController.add(newCodes);
   }
 
   static Future<void> _updateAppWidget(Codes codes) async {
@@ -122,6 +180,16 @@ class CodesBloc extends BlocBase {
     });
   }
 
+  void _fillShouldDeleteCodeData(Codes codes) {
+    final _newDeletableCodeData = <CodeData, bool>{};
+
+    for (final codeData in codes.codesDatas) {
+      _newDeletableCodeData[codeData] = false;
+    }
+
+    _uiCodesController.add(_newDeletableCodeData);
+  }
+
   Codes _getCurrentCodes(String exceptionMessage) {
     final _codes = _codesController.valueOrNull;
     if (_codes == null) {
@@ -129,5 +197,14 @@ class CodesBloc extends BlocBase {
     }
 
     return _codes;
+  }
+
+  UICodes _getCurrentUICodes(String exceptionMessage) {
+    final _uiCodes = _uiCodesController.valueOrNull;
+    if (_uiCodes == null) {
+      throw Exception(exceptionMessage);
+    }
+
+    return _uiCodes;
   }
 }

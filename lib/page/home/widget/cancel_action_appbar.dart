@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:home_screen_codes/bloc/bloc_provider.dart';
+import 'package:home_screen_codes/bloc/codes_bloc.dart';
 import 'package:home_screen_codes/page/home/notifier/is_deleting_notifier.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +12,10 @@ class CancelActionAppbar extends StatelessWidget {
         builder: (context, notifier, child) => Row(
           children: [
             InkWell(
-              onTap: () => notifier.value = false,
+              onTap: () {
+                notifier.value = false;
+                BlocProvider.of<CodesBloc>(context).cleanUICodes();
+              },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
@@ -22,7 +27,13 @@ class CancelActionAppbar extends StatelessWidget {
             const SizedBox(
               width: 8.0,
             ),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.check)),
+            IconButton(
+              onPressed: () {
+                BlocProvider.of<CodesBloc>(context).deleteCodesDatas();
+                notifier.value = false;
+              },
+              icon: const Icon(Icons.check),
+            ),
           ],
         ),
       );

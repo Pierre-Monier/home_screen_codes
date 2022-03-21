@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:home_screen_codes/bloc/bloc_provider.dart';
 import 'package:home_screen_codes/bloc/codes_bloc.dart';
-import 'package:home_screen_codes/domain/entity/code_data.dart';
 import 'package:home_screen_codes/domain/entity/codes.dart';
 import 'package:home_screen_codes/page/home/notifier/import_fab_should_extended_notifier.dart';
 import 'package:home_screen_codes/page/home/notifier/is_deleting_notifier.dart';
@@ -42,13 +41,17 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  List<Widget> _getItems(List<CodeData> codesData) {
+  List<Widget> _getItems(UICodes deletableCodeData) {
     final widgets = <Widget>[];
     var i = 0;
 
-    for (final codeData in codesData) {
+    for (final codeData in deletableCodeData.keys) {
       widgets.add(
-        CodeCard(codeData: codeData, key: Key('$i')),
+        CodeCard(
+          codeData: codeData,
+          key: Key('$i'),
+          isDeletable: deletableCodeData[codeData] ?? false,
+        ),
       );
       i++;
     }
@@ -69,10 +72,10 @@ class _HomeViewState extends State<HomeView> {
           value: _isFabExtendedNotifier,
         ),
       ],
-      child: Scaffold(
+      builder: (context, _) => Scaffold(
         appBar: const HomeViewAppbar(),
-        body: StreamBuilder<Codes>(
-          stream: BlocProvider.of<CodesBloc>(context).codes,
+        body: StreamBuilder<UICodes>(
+          stream: BlocProvider.of<CodesBloc>(context).uiCodes,
           builder: (context, snapshot) {
             final _data = snapshot.data;
 
@@ -82,7 +85,7 @@ class _HomeViewState extends State<HomeView> {
               );
             }
 
-            if (_data.codesDatas.isEmpty) {
+            if (_data.isEmpty) {
               return const Center(
                 child: Text('No Data'),
               );
@@ -95,7 +98,7 @@ class _HomeViewState extends State<HomeView> {
                 BlocProvider.of<CodesBloc>(context)
                     .onOrderChange(oldIndex, newIndex);
               }),
-              children: _getItems(_data.codesDatas),
+              children: _getItems(_data),
             );
           },
         ),
