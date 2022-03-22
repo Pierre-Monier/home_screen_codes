@@ -41,6 +41,7 @@ dependencies:
   rxdart: ^0.27.3
   flutter_image_compress: ^1.1.0
   provider: ^6.0.2
+  image_cropper: ^1.5.0
 
 dev_dependencies:
   flutter_test:

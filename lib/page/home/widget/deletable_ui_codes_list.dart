@@ -3,9 +3,11 @@ import 'package:home_screen_codes/bloc/codes_bloc.dart';
 import 'package:home_screen_codes/page/home/widget/deletable_code_card.dart';
 
 class DeletableUICodesList extends StatelessWidget {
-  const DeletableUICodesList(
-      {required this.uiCodes, required this.scrollController, Key? key})
-      : super(key: key);
+  const DeletableUICodesList({
+    required this.uiCodes,
+    required this.scrollController,
+    Key? key,
+  }) : super(key: key);
 
   final UICodes uiCodes;
   final ScrollController scrollController;

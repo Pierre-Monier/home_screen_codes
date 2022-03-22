@@ -6,6 +6,7 @@ import 'package:home_screen_codes/domain/entity/code_data.dart';
 import 'package:home_screen_codes/domain/entity/codes.dart';
 import 'package:home_screen_codes/extension/intent_type.dart';
 import 'package:home_screen_codes/service/file_writter_service.dart';
+import 'package:home_screen_codes/service/image_cropper_service.dart';
 import 'package:home_screen_codes/service/image_picker_service.dart';
 import 'package:home_screen_codes/service_locator.dart';
 import 'package:home_widget/home_widget.dart';
@@ -15,7 +16,7 @@ import 'package:home_screen_codes/extension/string.dart';
 
 typedef UICodes = Map<CodeData, bool>;
 
-// TODO crop feature (image_picker, https://stackoverflow.com/questions/45631350/flutter-hiding-floatingactionbutton), photo_view feature
+// TODO add routeGenerator and implement popUntil, add photoView?
 class CodesBloc extends BlocBase {
   final _codesController = BehaviorSubject<Codes>.seeded(Codes.empty());
 
@@ -59,13 +60,31 @@ class CodesBloc extends BlocBase {
     }
   }
 
-  Future<void> importCode(ImageSource source) async {
-    final imagePath = await sl.get<ImagePickerSerivce>().getImagePath(source);
+  Future<void> importCodeFromGallery() async {
+    final imagePath =
+        await sl.get<ImagePickerSerivce>().getImagePath(ImageSource.gallery);
 
     if (imagePath != null) {
-      final imageFile =
+      final imageOnDisk =
           await sl.get<FileWritterService>().copyFile(File(imagePath));
-      _addCodeData(CodeData(imagePath: imageFile.path));
+      _addCodeData(CodeData(imagePath: imageOnDisk.path));
+    }
+  }
+
+  Future<void> importCodeFromCamera() async {
+    final imagePath =
+        await sl.get<ImagePickerSerivce>().getImagePath(ImageSource.camera);
+
+    if (imagePath != null) {
+      final croppedImage = await sl.get<ImageCropperService>().cropFile(
+            imagePath,
+          );
+
+      final imageFile = croppedImage ?? File(imagePath);
+
+      final imageOnDisk =
+          await sl.get<FileWritterService>().copyFile(imageFile);
+      _addCodeData(CodeData(imagePath: imageOnDisk.path));
     }
   }
 
