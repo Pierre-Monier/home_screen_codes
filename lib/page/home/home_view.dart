@@ -5,9 +5,10 @@ import 'package:home_screen_codes/bloc/codes_bloc.dart';
 import 'package:home_screen_codes/domain/entity/codes.dart';
 import 'package:home_screen_codes/page/home/notifier/import_fab_should_extended_notifier.dart';
 import 'package:home_screen_codes/page/home/notifier/is_deleting_notifier.dart';
-import 'package:home_screen_codes/page/home/widget/code_card.dart';
+import 'package:home_screen_codes/page/home/widget/deletable_ui_codes_list.dart';
 import 'package:home_screen_codes/page/home/widget/home_view_appbar.dart';
 import 'package:home_screen_codes/page/home/widget/import_code_fab.dart';
+import 'package:home_screen_codes/page/home/widget/ui_codes_list.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
@@ -41,28 +42,11 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  List<Widget> _getItems(UICodes deletableCodeData) {
-    final widgets = <Widget>[];
-    var i = 0;
-
-    for (final codeData in deletableCodeData.keys) {
-      widgets.add(
-        CodeCard(
-          codeData: codeData,
-          key: Key('$i'),
-          isDeletable: deletableCodeData[codeData] ?? false,
-        ),
-      );
-      i++;
-    }
-
-    return widgets;
-  }
-
   @override
   Widget build(BuildContext context) {
-    // TODO(maybe): pass this in a notifier
+    // use to hide fab when keyboard is up
     final bool _showFab = MediaQuery.of(context).viewInsets.bottom == 0.0;
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<IsDeletingNotifier>.value(
@@ -91,14 +75,17 @@ class _HomeViewState extends State<HomeView> {
               );
             }
 
-            return ReorderableListView(
-              scrollController: _scrollController,
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              onReorder: ((oldIndex, newIndex) {
-                BlocProvider.of<CodesBloc>(context)
-                    .onOrderChange(oldIndex, newIndex);
-              }),
-              children: _getItems(_data),
+            return Consumer<IsDeletingNotifier>(
+              builder: (context, notifier, child) => notifier.value
+                  // we render UICodes in a non reorderable list
+                  ? DeletableUICodesList(
+                      uiCodes: _data,
+                      scrollController: _scrollController,
+                    )
+                  : UICodesList(
+                      uiCodes: _data,
+                      scrollController: _scrollController,
+                    ),
             );
           },
         ),
