@@ -13,15 +13,15 @@ class UICodesList extends StatelessWidget {
   final UICodes uiCodes;
   final ScrollController scrollController;
 
-  List<Widget> _getItems() {
+  List<Widget> _getItems(BuildContext context) {
     final widgets = <Widget>[];
     var i = 0;
 
     for (final codeData in uiCodes.keys) {
       widgets.add(
         CodeCard(
-          codeData: codeData,
           key: Key('$i'),
+          codeData: codeData,
           isDeletable: uiCodes[codeData] ?? false,
         ),
       );
@@ -38,6 +38,6 @@ class UICodesList extends StatelessWidget {
         onReorder: ((oldIndex, newIndex) {
           BlocProvider.of<CodesBloc>(context).onOrderChange(oldIndex, newIndex);
         }),
-        children: _getItems(),
+        children: _getItems(context),
       );
 }

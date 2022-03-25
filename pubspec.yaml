@@ -42,6 +42,12 @@ dependencies:
   flutter_image_compress: ^1.1.0
   provider: ^6.0.2
   image_cropper: ^1.5.0
+  # need to do this to fix this
+  # https://github.com/bluefireteam/photo_view/issues/502
+  photo_view:
+    git:
+      url: https://github.com/bluefireteam/photo_view
+      ref: master
 
 dev_dependencies:
   flutter_test:

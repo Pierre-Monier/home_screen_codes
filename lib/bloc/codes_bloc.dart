@@ -16,7 +16,6 @@ import 'package:home_screen_codes/extension/string.dart';
 
 typedef UICodes = Map<CodeData, bool>;
 
-// TODO add photoView?
 class CodesBloc extends BlocBase {
   final _codesController = BehaviorSubject<Codes>.seeded(Codes.empty());
 
@@ -155,16 +154,6 @@ class CodesBloc extends BlocBase {
     }
 
     _codesController.add(_codes);
-    // // delete codesData on disk
-    // // uiCodes.map((key, value) => value);
-    // // remove from data structure
-    // // update data structure
-    // final _newCodesData = [..._codes.codesDatas];
-    // // _newCodesData.removeWhere((codeData) => shouldDeleteCodeData[codeData]);
-
-    // final newCodes = _codes.copyWith(codesDatas: _newCodesData);
-
-    // _codesController.add(newCodes);
   }
 
   static Future<void> _updateAppWidget(Codes codes) async {
@@ -203,7 +192,6 @@ class CodesBloc extends BlocBase {
     _uiCodesController.add(_newDeletableCodeData);
   }
 
-  // TODO(pierre/medium): maybe make this return a copy (avoid side effects)
   Codes _getCurrentCodes(String exceptionMessage) {
     final _codes = _codesController.valueOrNull;
     if (_codes == null) {

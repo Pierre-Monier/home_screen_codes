@@ -23,7 +23,15 @@ class _CodeLabelTextEditorState extends State<CodeLabelTextEditor> {
   Widget _getChild() {
     if (_isEditing && widget.canEdit) {
       return TextField(
-        controller: TextEditingController(text: widget.codeData.labelText),
+        keyboardType: TextInputType.text,
+        controller: TextEditingController.fromValue(
+          TextEditingValue(
+            text: widget.codeData.labelText,
+            selection: TextSelection.fromPosition(
+              TextPosition(offset: widget.codeData.labelText.length),
+            ),
+          ),
+        ),
         autofocus: true,
         textAlign: TextAlign.center,
         onSubmitted: (value) {

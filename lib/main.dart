@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:home_screen_codes/bloc/bloc_provider.dart';
 import 'package:home_screen_codes/bloc/codes_bloc.dart';
 import 'package:home_screen_codes/core/color/app_color.dart';
+import 'package:home_screen_codes/domain/entity/code_data.dart';
+import 'package:home_screen_codes/page/detail/detail_view.dart';
 import 'package:home_screen_codes/page/home/home_view.dart';
 import 'package:home_screen_codes/page/loading/loading_view.dart';
 import 'package:home_screen_codes/service_locator.dart';
@@ -48,6 +50,13 @@ Route<dynamic>? onGenerateRoute(RouteSettings settings) {
       return MaterialPageRoute<void>(
         settings: settings,
         builder: (context) => const LoadingView(),
+      );
+    case DetailView.routeName:
+      return MaterialPageRoute<void>(
+        settings: settings,
+        builder: (context) => DetailView(
+          codeData: settings.arguments as CodeData,
+        ),
       );
     default:
       return null;
