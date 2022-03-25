@@ -44,3 +44,4 @@ linter:
     - control_flow_in_finally
     - throw_in_finally
     - avoid_catches_without_on_clauses
+    - use_build_context_synchronously

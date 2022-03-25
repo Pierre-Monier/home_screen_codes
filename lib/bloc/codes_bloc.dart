@@ -16,11 +16,9 @@ import 'package:home_screen_codes/extension/string.dart';
 
 typedef UICodes = Map<CodeData, bool>;
 
-// TODO add routeGenerator and implement popUntil, add photoView?
+// TODO add photoView?
 class CodesBloc extends BlocBase {
   final _codesController = BehaviorSubject<Codes>.seeded(Codes.empty());
-
-  Stream<Codes> get codes => _codesController.stream;
 
   /// a wrapper on codes, use to set the deletable value
   final _uiCodesController = BehaviorSubject<UICodes>.seeded({});
@@ -98,14 +96,10 @@ class CodesBloc extends BlocBase {
   void onOrderChange(int oldIndex, int newIndex) {
     final _codes = _getCurrentCodes('Trying to order an empty codes');
 
-    // we copy current codesDatas
-    // final _newCodesDatas = [..._codes.codesDatas];
-    // then we update the order
     final _codeData = _codes.codesDatas.removeAt(oldIndex);
     final finalNewIndex = oldIndex < newIndex ? newIndex - 1 : newIndex;
     _codes.codesDatas.insert(finalNewIndex, _codeData);
 
-    // final _newCodes = _codes.copyWith(codesDatas: _newCodesDatas);
     _codesController.add(_codes);
   }
 
@@ -209,6 +203,7 @@ class CodesBloc extends BlocBase {
     _uiCodesController.add(_newDeletableCodeData);
   }
 
+  // TODO(pierre/medium): maybe make this return a copy (avoid side effects)
   Codes _getCurrentCodes(String exceptionMessage) {
     final _codes = _codesController.valueOrNull;
     if (_codes == null) {

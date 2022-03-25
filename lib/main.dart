@@ -3,6 +3,7 @@ import 'package:home_screen_codes/bloc/bloc_provider.dart';
 import 'package:home_screen_codes/bloc/codes_bloc.dart';
 import 'package:home_screen_codes/core/color/app_color.dart';
 import 'package:home_screen_codes/page/home/home_view.dart';
+import 'package:home_screen_codes/page/loading/loading_view.dart';
 import 'package:home_screen_codes/service_locator.dart';
 
 void main() {
@@ -30,7 +31,25 @@ class MyApp extends StatelessWidget {
         colorSchemeSeed: AppColor.baseColor,
         brightness: Brightness.dark,
       ),
-      home: const HomeView(),
+      initialRoute: HomeView.routeName,
+      onGenerateRoute: onGenerateRoute,
     );
+  }
+}
+
+Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+  switch (settings.name) {
+    case HomeView.routeName:
+      return MaterialPageRoute<void>(
+        settings: settings,
+        builder: (context) => const HomeView(),
+      );
+    case LoadingView.routeName:
+      return MaterialPageRoute<void>(
+        settings: settings,
+        builder: (context) => const LoadingView(),
+      );
+    default:
+      return null;
   }
 }

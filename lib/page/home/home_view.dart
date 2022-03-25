@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:home_screen_codes/bloc/bloc_provider.dart';
 import 'package:home_screen_codes/bloc/codes_bloc.dart';
-import 'package:home_screen_codes/domain/entity/codes.dart';
 import 'package:home_screen_codes/page/home/notifier/import_fab_should_extended_notifier.dart';
 import 'package:home_screen_codes/page/home/notifier/is_deleting_notifier.dart';
 import 'package:home_screen_codes/page/home/widget/deletable_ui_codes_list.dart';
@@ -13,6 +12,8 @@ import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
+
+  static const routeName = '/home';
 
   @override
   State<StatefulWidget> createState() => _HomeViewState();
@@ -91,8 +92,8 @@ class _HomeViewState extends State<HomeView> {
         ),
         floatingActionButton: Consumer<IsDeletingNotifier>(
           builder: (context, notifier, child) => !notifier.value && _showFab
-              ? StreamBuilder<Codes>(
-                  stream: BlocProvider.of<CodesBloc>(context).codes,
+              ? StreamBuilder<UICodes>(
+                  stream: BlocProvider.of<CodesBloc>(context).uiCodes,
                   builder: (context, snapshot) {
                     final _data = snapshot.data;
 

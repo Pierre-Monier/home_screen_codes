@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:home_screen_codes/bloc/bloc_provider.dart';
 import 'package:home_screen_codes/bloc/codes_bloc.dart';
+import 'package:home_screen_codes/page/home/home_view.dart';
 import 'package:home_screen_codes/page/loading/loading_view.dart';
 
-class SourcePickerDialog extends StatelessWidget {
+class SourcePickerDialog extends StatefulWidget {
   const SourcePickerDialog({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => _SourcePickerDialogState();
+}
+
+class _SourcePickerDialogState extends State<SourcePickerDialog> {
+  Future<void> _onTap() async {
+    Navigator.pushNamed(context, LoadingView.routeName);
+    await BlocProvider.of<CodesBloc>(context).importCodeFromCamera();
+
+    if (!mounted) return;
+    Navigator.popUntil(
+      context,
+      (route) => route.settings.name == HomeView.routeName,
+    );
+  }
 
   @override
   Widget build(BuildContext context) => AlertDialog(
@@ -15,20 +32,7 @@ class SourcePickerDialog extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.camera_alt),
               title: const Text('Camera'),
-              onTap: () async {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const LoadingView(),
-                  ),
-                );
-                await BlocProvider.of<CodesBloc>(context)
-                    .importCodeFromCamera();
-                // TODO fix this gap
-                Navigator.pop(context);
-                // Navigator.popUntil(context, ModalRoute.withName('/home'));
-                Navigator.pop(context);
-              },
+              onTap: _onTap,
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
