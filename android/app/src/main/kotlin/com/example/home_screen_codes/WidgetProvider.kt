@@ -3,11 +3,8 @@ package com.example.home_screen_codes
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.widget.RemoteViews
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
-import es.antonborri.home_widget.HomeWidgetLaunchIntent
 import es.antonborri.home_widget.HomeWidgetProvider
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
@@ -19,10 +16,6 @@ data class Codes(val codesDatas: List<CodeData>, val currentIndex: Int)
 data class CodeData(val imagePath: String, val labelText: String)
 
 class AppWidgetProvider : HomeWidgetProvider() {
-    private var codeDataIndex = 0;
-    private var codes: Codes? = null
-    private var remoteViews: RemoteViews? = null
-
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -39,8 +32,7 @@ class AppWidgetProvider : HomeWidgetProvider() {
                 if (jsonCodes != null && jsonCodes.isNotEmpty()) {
                     val parsedCodes = Json.decodeFromString<Codes>(jsonCodes)
                     if (parsedCodes.codesDatas.isNotEmpty()) {
-                        codes = parsedCodes
-                        updateWidgetUI(codes!!, codes!!.currentIndex, context)
+                        updateWidgetUI(parsedCodes, parsedCodes.currentIndex)
                     }
                 }
 
@@ -51,12 +43,6 @@ class AppWidgetProvider : HomeWidgetProvider() {
                 val previousIntent = HomeWidgetBackgroundIntent.getBroadcast(context,
                     Uri.parse("myAppWidget://previous"))
                 setOnClickPendingIntent(R.id.previous_button, previousIntent)
-//                setOnBackButtonClickIntent = HomeWidgetBackgroundIntent.getBroadcast()
-//
-//                 Pending intent to update counter on button click
-//                val backgroundIntent = HomeWidgetBackgroundIntent.getBroadcast(context,
-//                        Uri.parse("myAppWidget://updatecounter"))
-//                 setOnClickPendingIntent(R.id.bt_update, backgroundIntent)
             }
             appWidgetManager.updateAppWidget(widgetId, views)
         }

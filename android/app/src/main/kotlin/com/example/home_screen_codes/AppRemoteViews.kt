@@ -3,12 +3,9 @@ package com.example.home_screen_codes
 import android.app.PendingIntent
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.view.View
 import android.widget.RemoteViews
 import es.antonborri.home_widget.HomeWidgetLaunchIntent
-
-import android.graphics.Bitmap
-import com.bumptech.glide.Glide
-
 
 class AppRemoteViews( packageName: String, id: Int): RemoteViews(packageName, id) {
 
@@ -19,34 +16,39 @@ class AppRemoteViews( packageName: String, id: Int): RemoteViews(packageName, id
         )
     }
 
-    fun updateWidgetUI(codes: Codes, index: Int, context: Context) {
+    fun updateWidgetUI(codes: Codes, index: Int) {
         val codeData = codes.codesDatas[index]
-        val bitmapOptions = BitmapFactory.Options()
-        bitmapOptions.inSampleSize = 4
-        val bitmap = BitmapFactory.decodeFile(codeData.imagePath, bitmapOptions)
 
-//        val bitmap: Bitmap = Glide.with(context)
-//            .asBitmap()
-//            .load(codeData.imagePath)
-//            .override(480, 342).submit().get()
-
-        setImageViewBitmap(R.id.image, bitmap)
-
-        setTextViewText(
-            R.id.label_text,
-            getLabelText(
-                codesLength = codes.codesDatas.size,
-                currentIndex = index,
-                labelText = codeData.labelText
-            )
-        )
-
-//        if (codes.codesDatas.size <= 1) {
-//            setIcon
-//        }
+        setButtonsVisibility(codes.codesDatas.size)
+        setImage(codeData.imagePath)
+        setLabelText(codeData.labelText)
     }
 
-    private fun getLabelText(codesLength: Int, currentIndex: Int, labelText: String): String {
-        return "$labelText - ${currentIndex+1}/$codesLength"
+    private fun setLabelText(labelText: String) {
+        setTextViewText(
+            R.id.label_text,
+            labelText
+        )
+    }
+
+    private fun setImage(imagePath: String) {
+        val bitmapOptions = BitmapFactory.Options()
+        bitmapOptions.inSampleSize = 4
+        val bitmap = BitmapFactory.decodeFile(imagePath, bitmapOptions)
+        setImageViewBitmap(R.id.image, bitmap)
+    }
+
+    private fun setButtonsVisibility(codesDatasSize: Int) {
+        val buttonViewVisibility = getButtonVisibility(codesDatasSize)
+        setViewVisibility(R.id.previous_button, buttonViewVisibility)
+        setViewVisibility(R.id.next_button, buttonViewVisibility)
+    }
+
+    private fun getButtonVisibility(codesDatasSize: Int): Int  {
+        return if (codesDatasSize <= 1) {
+            View.INVISIBLE
+        } else {
+            View.VISIBLE
+        }
     }
 }
