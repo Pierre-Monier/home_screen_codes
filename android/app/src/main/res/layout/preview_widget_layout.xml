@@ -1,0 +1,56 @@
+<FrameLayout
+    android:id="@+id/widget_root"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    >
+
+    <RelativeLayout
+        android:id="@+id/info_and_actions"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="32dp"
+            android:src="@drawable/qrcode_preview"
+            />
+        <Button
+            android:id="@+id/previous_button"
+            android:background="@drawable/ic_baseline_chevron_left_24"
+            android:textColor="@android:color/white"
+            android:layout_alignParentBottom="true"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            />
+
+        <TextView
+            android:id="@+id/label_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18dp"
+            android:text="label text"
+            android:gravity="center"
+            android:singleLine="true"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:textColor="@android:color/white"
+            android:layout_alignParentBottom="true"
+            />
+
+        <Button
+            android:id="@+id/next_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/ic_baseline_chevron_right_24"
+            android:textColor="@android:color/white" />
+
+    </RelativeLayout>
+</FrameLayout>
