@@ -38,7 +38,7 @@ class CodesBloc extends BlocBase {
 
     _codesController.listen((newCodes) {
       _updateAppWidget(newCodes);
-      _fillShouldDeleteCodeData(newCodes);
+      _fillUICodes(newCodes);
     });
   }
 
@@ -57,20 +57,9 @@ class CodesBloc extends BlocBase {
     }
   }
 
-  Future<void> importCodeFromGallery() async {
+  Future<void> importCode(ImageSource imageSource) async {
     final imagePath =
-        await sl.get<ImagePickerSerivce>().getImagePath(ImageSource.gallery);
-
-    if (imagePath != null) {
-      final imageOnDisk =
-          await sl.get<FileWritterService>().copyFile(File(imagePath));
-      _addCodeData(CodeData(imagePath: imageOnDisk.path));
-    }
-  }
-
-  Future<void> importCodeFromCamera() async {
-    final imagePath =
-        await sl.get<ImagePickerSerivce>().getImagePath(ImageSource.camera);
+        await sl.get<ImagePickerSerivce>().getImagePath(imageSource);
 
     if (imagePath != null) {
       final croppedImage = await sl.get<ImageCropperService>().cropFile(
@@ -150,7 +139,7 @@ class CodesBloc extends BlocBase {
 
     for (final code in _shouldBeDeletedCodes) {
       sl.get<FileWritterService>().deleteFileOnDisk(File(code.imagePath));
-      _codes.codesDatas.remove(code);
+      _codes.removeCodeData(code);
     }
 
     _codesController.add(_codes);
@@ -182,14 +171,14 @@ class CodesBloc extends BlocBase {
     });
   }
 
-  void _fillShouldDeleteCodeData(Codes codes) {
-    final _newDeletableCodeData = <CodeData, bool>{};
+  void _fillUICodes(Codes codes) {
+    final UICodes _newUICodes = {};
 
     for (final codeData in codes.codesDatas) {
-      _newDeletableCodeData[codeData] = false;
+      _newUICodes[codeData] = false;
     }
 
-    _uiCodesController.add(_newDeletableCodeData);
+    _uiCodesController.add(_newUICodes);
   }
 
   Codes _getCurrentCodes(String exceptionMessage) {

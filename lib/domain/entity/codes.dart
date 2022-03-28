@@ -24,6 +24,14 @@ class Codes {
     }
   }
 
+  void removeCodeData(CodeData codeData) {
+    codesDatas.remove(codeData);
+
+    if (currentIndex >= codesDatas.length) {
+      currentIndex = codesDatas.length - 1;
+    }
+  }
+
   void _next() {
     if (codesDatas.length <= 1) {
       return;

@@ -3,6 +3,7 @@ import 'package:home_screen_codes/bloc/bloc_provider.dart';
 import 'package:home_screen_codes/bloc/codes_bloc.dart';
 import 'package:home_screen_codes/page/home/home_view.dart';
 import 'package:home_screen_codes/page/loading/loading_view.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SourcePickerDialog extends StatefulWidget {
   const SourcePickerDialog({Key? key}) : super(key: key);
@@ -12,9 +13,9 @@ class SourcePickerDialog extends StatefulWidget {
 }
 
 class _SourcePickerDialogState extends State<SourcePickerDialog> {
-  Future<void> _onTap() async {
+  Future<void> _onTap({required ImageSource imageSource}) async {
     Navigator.pushNamed(context, LoadingView.routeName);
-    await BlocProvider.of<CodesBloc>(context).importCodeFromCamera();
+    await BlocProvider.of<CodesBloc>(context).importCode(imageSource);
 
     if (!mounted) return;
     Navigator.popUntil(
@@ -32,14 +33,12 @@ class _SourcePickerDialogState extends State<SourcePickerDialog> {
             ListTile(
               leading: const Icon(Icons.camera_alt),
               title: const Text('Camera'),
-              onTap: _onTap,
+              onTap: () => _onTap(imageSource: ImageSource.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
               title: const Text('Gallery'),
-              onTap: () {
-                BlocProvider.of<CodesBloc>(context).importCodeFromGallery();
-              },
+              onTap: () => _onTap(imageSource: ImageSource.gallery),
             ),
           ],
         ),
