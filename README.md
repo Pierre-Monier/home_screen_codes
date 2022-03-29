@@ -8,6 +8,7 @@ I have a barcode card for my climbing 🧗‍♀️ club. I was too bored to tak
 All the logic is made with Dart, and therefore can be common to Android and iOS. The home screen widget does two things, it reads/displays data, and it sends events to Dart code, in order to update the data. This communication process is simplified by the use of a plugin name [home_widget](https://pub.dev/packages/home_widget). 
 
 ## Demo
+![demo gif](readme_assets/demo.gif)
 
 ## TODO
 - [ ] iOS App Clips
